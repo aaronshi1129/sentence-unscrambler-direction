@@ -27,10 +27,10 @@ body {
 }
 
 .container {
-    position: absolute; /* Added for perfect centering */
-    top: 50%; /* Added for perfect centering */
-    left: 50%; /* Added for perfect centering */
-    transform: translate(-50%, -50%); /* Added for perfect centering */
+    position: relative; /* Changed from absolute to fix modal z-index issue */
+    top: 0; /* Removed absolute positioning */
+    left: 0; /* Removed absolute positioning */
+    transform: none; /* Removed absolute positioning */
     background: rgba(26, 42, 108, 0.85);
     backdrop-filter: blur(10px);
     padding: 2rem;
@@ -39,6 +39,7 @@ body {
     text-align: center;
     max-width: 800px;
     width: 90%;
+    margin: 0 auto; /* Added for centering */
 }
 
 .subtitle {
@@ -118,8 +119,10 @@ button:hover {
 }
 
 @keyframes celebrate {
-    0% { transform: scale(1) translate(-50%, -50%); }
-    50% { transform: scale(1.1) translate(-50%, -50%); }
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+} /* Fixed missing closing brace */
 
 .celebrate {
     animation: celebrate 0.5s ease-in-out;
@@ -135,7 +138,7 @@ button:hover {
     background: rgba(0, 0, 0, 0.8);
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 1000; /* Explicitly set high z-index to ensure visibility */
 }
 
 .modal-content {
@@ -146,6 +149,7 @@ button:hover {
     color: black;
     max-width: 500px;
     width: 90%;
+    z-index: 1001; /* Ensure content is above modal background */
 }
 
 .modal-content img {
@@ -250,7 +254,6 @@ const sentences = [
     "Go straight until you see the park on your left.",  
     "The library is located just past the next intersection."  
 ];
-
 
 let currentSentence = "";
 let selectedWords = [];
