@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 <base href="">
@@ -27,10 +28,10 @@ body {
 }
 
 .container {
-    position: relative; /* Changed from absolute to fix modal z-index issue */
-    top: 0; /* Removed absolute positioning */
-    left: 0; /* Removed absolute positioning */
-    transform: none; /* Removed absolute positioning */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     background: rgba(26, 42, 108, 0.85);
     backdrop-filter: blur(10px);
     padding: 2rem;
@@ -39,7 +40,6 @@ body {
     text-align: center;
     max-width: 800px;
     width: 90%;
-    margin: 0 auto; /* Added for centering */
 }
 
 .subtitle {
@@ -100,6 +100,16 @@ button:hover {
     transform: translateY(-2px);
 }
 
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+button.active {
+    background: rgba(46, 204, 113, 0.4); /* Green background for active state */
+}
+
 .score {
     font-size: 1.2rem;
     margin: 20px 0;
@@ -111,23 +121,40 @@ button:hover {
     font-weight: bold;
 }
 
-.author-info {
+.control-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
     margin-top: 20px;
-    font-size: 0.8rem;
-    opacity: 0.7;
-    text-align: center;
 }
 
-@keyframes celebrate {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-} /* Fixed missing closing brace */
-
-.celebrate {
-    animation: celebrate 0.5s ease-in-out;
+.directions {
+    display: none;
+    margin: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    text-align: left;
 }
 
+/* Speech button styles */
+#speakSentenceButton {
+    background: rgba(52, 152, 219, 0.4);
+}
+
+#speakSentenceButton:hover {
+    background: rgba(52, 152, 219, 0.6);
+}
+
+#ttsToggle {
+    transition: all 0.3s;
+}
+
+#ttsToggle.active {
+    background: rgba(46, 204, 113, 0.4);
+}
+
+/* Settings Modal Styles */
 .modal {
     display: none;
     position: fixed;
@@ -136,255 +163,253 @@ button:hover {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.8);
-    align-items: center;
-    justify-content: center;
-    z-index: 1000; /* Explicitly set high z-index to ensure visibility */
+    z-index: 1000;
 }
 
 .modal-content {
-    background: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffffff;  /* Changed to white background */
+    padding: 2rem;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 600px;
+    color: #333333;  /* Dark gray text for better contrast */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.setting-group {
+    margin-bottom: 1.5rem;
+}
+
+.setting-group h2 {
+    color: #1a2a6c;  /* Dark blue heading */
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.setting-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    color: #1a2a6c;  /* Dark blue labels */
+    font-weight: 600;
+}
+
+.settings-select {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;  /* Light gray border */
+    background: #ffffff;
+    color: #333333;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.settings-select:focus {
+    border-color: #3498db;  /* Blue highlight on focus */
+    outline: none;
+}
+
+.settings-textarea {
+    width: 100%;
+    min-height: 200px;
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+    background: #ffffff;
+    color: #333333;
+    font-size: 1rem;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+}
+
+.settings-textarea:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+.settings-textarea::placeholder {
+    color: #999999;  /* Medium gray placeholder text */
+}
+
+.settings-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}
+
+.settings-button {
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+#saveSettings {
+    background: #3498db;
+    color: white;
+    padding: 0.8rem 2rem;
+}
+
+#saveSettings:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+}
+
+#closeSettings {
+    background: #e0e0e0;
+    color: #333333;
+}
+
+#closeSettings:hover {
+    background: #d0d0d0;
+    transform: translateY(-2px);
+}
+
+/* Add subtle hover states for interactive elements */
+.settings-select:hover,
+.settings-textarea:hover {
+    border-color: #3498db;
+}
+
+/* Error state for validation */
+.settings-select.error,
+.settings-textarea.error {
+    border-color: #e74c3c;
+}
+
+/* Success state for validation */
+.settings-select.success,
+.settings-textarea.success {
+    border-color: #2ecc71;
+}
+/* Victory Modal Styles */
+#victoryModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+#victoryModal .modal-content {
+    background: #ffffff;
     padding: 2rem;
     border-radius: 15px;
     text-align: center;
-    color: black;
-    max-width: 500px;
-    width: 90%;
-    z-index: 1001; /* Ensure content is above modal background */
+    color: #333333;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-.modal-content img {
-    margin: 20px 0;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+#victoryModal h2 {
+    color: #1a2a6c;
+    margin-bottom: 1rem;
 }
 
-.close-modal {
-    margin-top: 20px;
-    background: #1a2a6c;
+#victoryModal p {
+    margin-bottom: 1.5rem;
+}
+
+#victoryModal img {
+    margin-bottom: 1.5rem;
+}
+
+#victoryModal button {
+    background: #3498db;
     color: white;
-    padding: 10px 20px;
-    border-radius: 20px;
-    cursor: pointer;
+    padding: 0.8rem 2rem;
     border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+#victoryModal button:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
 }
 </style>
 </head>
 <body>
 <div class="container">
-    <h1>Sentence Unscrambler (Giving Directions)</h1>
+    <h1>Sentence Unscrambler</h1>
     <p class="subtitle">Finish 5 sentence unscrambling tasks and earn a Pokemon!</p>
     <p class="score">Score: <span id="score">0</span></p>
     <div class="feedback" id="feedback"></div>
     <div class="scrambled-words" id="scrambledWords"></div>
     <div class="answer-area" id="answerArea"></div>
-    <button id="checkButton">Check Answer</button>
-    <button id="nextButton">Skip This Sentence</button>
+    <button id="startButton">Start</button>
+    <button id="checkButton" style="display: none;">Check Answer</button>
+    <button id="skipButton" style="display: none;">Skip This Sentence</button>
+    <button id="nextSentenceButton" style="display: none;">Next Sentence</button>
+    <button id="speakSentenceButton" style="display: none;">
+        <span>🔊 Read Sentence</span>
+    </button>
+    <div class="control-buttons">
+        <button id="settingsButton">Settings</button>
+        <button id="directionsButton">Directions</button>
+        <button id="ttsToggle">Voice: OFF</button>
+    </div>
+    <div class="directions" id="directions">
+        <h3>How to Play:</h3>
+        <p>1. Click on words in any order to construct the original sentence.</p>
+        <p>2. Click Check Answer to verify your solution.</p>
+        <p>3. Complete 5 sentences correctly to win a Pokemon!</p>
+        <p>4. Use Settings to customize your own sentence bank.</p>
+        <p>5. Toggle Voice ON to hear words as you click them.</p>
+        <p>6. After correctly completing a sentence, use the Read Sentence button to hear the full sentence.</p>
+    </div>
+
     <div class="author-info">
         Author: Aaron Shi<br>
-        Released in 2025.<br>
+        Released in March 2025. v3.2.
     </div>
 </div>
 
-<div class="modal" id="victoryModal">
-    <div class="modal-content">
-        <h2>Congratulations!</h2>
-        <p>You've completed this sentence unscrambling challenge, and you've won this Pokemon!</p>
-        <div id="pokemonImage"></div>
-        <button class="close-modal" onclick="closeModal()">Play Again</button>
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <h2>Settings</h2>
+            <div class="setting-group">
+                <label for="sentenceSource">Sentence Bank:</label>
+                <select id="sentenceSource" class="settings-select">
+                    <option value="default">Default (Giving Directions)</option>
+                    <option value="custom">Custom Sentences</option>
+                </select>
+            </div>
+            <div class="setting-group">
+                <label for="customSentences">Custom Sentences (one per line):</label>
+                <textarea id="customSentences" class="settings-textarea" 
+                          placeholder="Enter your custom sentences here, one per line"></textarea>
+            </div>
+            <div class="settings-buttons">
+                <button id="saveSettings">Save Settings</button>
+                <button id="closeSettings">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <!-- Victory Modal -->
+    <div class="modal" id="victoryModal">
+        <div class="modal-content">
+            <h2>Congratulations!</h2>
+            <p>You've completed this sentence unscrambling challenge, and you've won this Pokemon!</p>
+            <div id="pokemonImage"></div>
+            <button onclick="closeModal()">Play Again</button>
     </div>
 </div>
-
-<script>
-const sentences = [  
-    "Turn left at the traffic light.",  
-    "Continue straight for two miles, then turn right.",  
-    "Take the second exit at the roundabout.",  
-    "Drive past the gas station, and then turn left.",  
-    "The restaurant will be on your right after the bridge.",  
-    "Follow the road signs to the airport.",  
-    "Take the first left after the intersection.",  
-    "Turn right at the next set of lights.",  
-    "The post office is just ahead on your left.",  
-    "Go straight for three blocks, then turn right.",  
-    "After the stop sign, take a left and go straight.",  
-    "The grocery store will be on your right after the park.",  
-    "Keep driving until you see the large blue sign.",  
-    "Turn left onto Main Street, and continue for half a mile.",  
-    "Make a U-turn at the next intersection.",  
-    "Stay in the right lane to merge onto the highway.",  
-    "The hotel is just after the next light on the left.",  
-    "Turn left at the end of the street.",  
-    "After the second traffic light, take a right.",  
-    "Turn right at the gas station, and follow the road.",  
-    "You will see a shopping mall on your left after the next intersection.",  
-    "Take the exit towards [destination].",  
-    "Go straight ahead, and take the second right.",  
-    "At the roundabout, take the third exit.",  
-    "Drive for about a mile, and it will be on your left.",  
-    "The highway entrance is just around the corner.",  
-    "Continue for two blocks, and it will be on your right.",  
-    "Follow the signs to the city center.",  
-    "Take the next left and follow the road to the end.",  
-    "Continue straight until you reach the traffic circle.",  
-    "The museum is on your left after the pedestrian crossing.",  
-    "At the traffic lights, turn left towards the station.",  
-    "Go straight, and the park will be on your right.",  
-    "Turn left at the next intersection and then right.",  
-    "You’ll see a sign for [destination] on the right.",  
-    "The hospital is a few blocks ahead, on the right.",  
-    "Keep going straight, and you’ll find it on the corner.",  
-    "Turn right at the fork in the road.",  
-    "At the next set of lights, turn left.",  
-    "Go past the church, and it’s on your left.",  
-    "The bank is at the corner of Oak Street and Pine Avenue.",  
-    "Follow the road for two kilometers, then turn left.",  
-    "Make a left after the bridge and follow the street.",  
-    "Take the exit for [destination], then continue for a mile.",  
-    "Continue straight, and you’ll reach the train station.",  
-    "Turn right at the first intersection after the school.",  
-    "The cinema is on the corner, right after the supermarket.",  
-    "At the next roundabout, take the second exit.",  
-    "The post office is located near the corner of Maple Street.",  
-    "Go straight, and you’ll see the entrance on your right.",  
-    "Turn left just before the traffic lights.",  
-    "Drive through the tunnel and take the second exit.",  
-    "Follow the road signs to the nearest park.",  
-    "Turn left at the top of the hill.",  
-    "At the light, turn left towards the stadium.",  
-    "Go straight until you see the park on your left.",  
-    "The library is located just past the next intersection."  
-];
-
-let currentSentence = "";
-let selectedWords = [];
-let score = 0;
-let hasScored = false;
-
-async function showVictoryModal() {
-    const modal = document.getElementById("victoryModal");
-    const pokemonId = Math.floor(Math.random() * 898) + 1;
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
-    const data = await response.json();
-    
-    const pokemonImageDiv = document.getElementById("pokemonImage");
-    const img = document.createElement("img");
-    img.src = data.sprites.other["official-artwork"].front_default;
-    img.alt = `${data.name} Pokemon artwork`;
-    img.width = 300;
-    img.height = 300;
-    
-    pokemonImageDiv.innerHTML = "";
-    pokemonImageDiv.appendChild(img);
-    modal.style.display = "flex";
-}
-
-function closeModal() {
-    document.getElementById("victoryModal").style.display = "none";
-    resetGame();
-}
-
-function scrambleWords(sentence) {
-    return sentence.split(" ")
-        .map(word => ({word, sort: Math.random()}))
-        .sort((a, b) => a.sort - b.sort)
-        .map(({word}) => word);
-}
-
-function updateDisplay() {
-    const scrambledWordsDiv = document.getElementById("scrambledWords");
-    const answerAreaDiv = document.getElementById("answerArea");
-    
-    scrambledWordsDiv.innerHTML = "";
-    currentScrambled.forEach((word, index) => {
-        if (!selectedWords.includes(index)) {
-            const wordDiv = document.createElement("div");
-            wordDiv.className = "word";
-            wordDiv.textContent = word;
-            wordDiv.dataset.index = index;
-            scrambledWordsDiv.appendChild(wordDiv);
-        }
-    });
-    
-    answerAreaDiv.innerHTML = "";
-    selectedWords.forEach((wordIndex) => {
-        const wordDiv = document.createElement("div");
-        wordDiv.className = "word";
-        wordDiv.textContent = currentScrambled[wordIndex];
-        wordDiv.dataset.index = wordIndex;
-        answerAreaDiv.appendChild(wordDiv);
-    });
-}
-
-function checkAnswer() {
-    const currentAnswer = selectedWords.map(index => currentScrambled[index]).join(" ");
-    const feedback = document.getElementById("feedback");
-    
-    if (currentAnswer === currentSentence) {
-        if (!hasScored) {
-            score += 10;
-            document.getElementById("score").textContent = score;
-            hasScored = true;
-        }
-        feedback.textContent = "Correct! +10 points";
-        feedback.style.color = "#00ff00";
-        document.querySelector(".container").classList.add("celebrate");
-        setTimeout(() => {
-            document.querySelector(".container").classList.remove("celebrate");
-        }, 500);
-        
-        if (score >= 50) {  
-            showVictoryModal();
-        } else {
-            setTimeout(newSentence, 2000);
-        }
-    } else {
-        feedback.textContent = "Try again!";
-        feedback.style.color = "#ff0000";
-    }
-}
-
-function newSentence() {
-    currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
-    currentScrambled = scrambleWords(currentSentence);
-    selectedWords = [];
-    hasScored = false;
-    document.getElementById("feedback").textContent = "";
-    updateDisplay();
-}
-
-function resetGame() {
-    score = 0;
-    hasScored = false;
-    document.getElementById("score").textContent = score;
-    newSentence();
-}
-
-let currentScrambled = [];
-
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("scrambledWords").addEventListener("click", (e) => {
-        if (e.target.classList.contains("word")) {
-            const index = parseInt(e.target.dataset.index);
-            if (!selectedWords.includes(index)) {
-                selectedWords.push(index);
-                updateDisplay();
-            }
-        }
-    });
-
-    document.getElementById("answerArea").addEventListener("click", (e) => {
-        if (e.target.classList.contains("word")) {
-            const index = parseInt(e.target.dataset.index);
-            selectedWords = selectedWords.filter(i => i !== index);
-            updateDisplay();
-        }
-    });
-
-    document.getElementById("checkButton").addEventListener("click", checkAnswer);
-    document.getElementById("nextButton").addEventListener("click", newSentence);
-
-    resetGame();
-});
-</script>
 </body>
 </html>
